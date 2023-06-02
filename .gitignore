@@ -1,0 +1,7 @@
+.env
+.vscode
+__pycache__
+Sample/
+mongo_test.py
+locale_env
+```
