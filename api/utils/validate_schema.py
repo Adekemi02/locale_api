@@ -1,7 +1,7 @@
 from email_validator import validate_email, EmailNotValidError
 from ..model.db import connect_to_db
-import sys
-from os.path import abspath, dirname
+# import sys
+# from os.path import abspath, dirname
 
 
 # Load environment variables
@@ -62,16 +62,16 @@ except Exception as e:
 
 
 # users.create_index("email", unique=True)
-def insert_test_doc():
-    test_document = {
-        "first_name": "test3",
-        "last_name": "test3",
-        "email": "ggtt2@gmail.com",
-        "password_hash": "test12345"
-    }
-    try:
-        users.insert_one(test_document)
-    except Exception as e:
-        print(e)
+# def insert_test_doc():
+#     test_document = {
+#         "first_name": "test3",
+#         "last_name": "test3",
+#         "email": "ggtt2@gmail.com",
+#         "password_hash": "test12345"
+#     }
+#     try:
+#         users.insert_one(test_document)
+#     except Exception as e:
+#         print(e)
 
-insert_test_doc()
+# insert_test_doc()
