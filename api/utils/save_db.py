@@ -10,7 +10,7 @@ database = client.locale
 
 # Open JSON file
 try:
-    with open('data/nigeria-data.json', 'r') as json_file:
+    with open("data/nigeria-data.json", "r") as json_file:
         data = json.load(json_file)
         collection = database.data
         # collection.insert_many(data)
@@ -24,19 +24,15 @@ local_governments = database.local_governments
 
 # Get distinct geopolitical zones with their corresponding states
 try:
-    geopolitical_zones_states = collection.aggregate([
-        {
-            "$group": {"_id": "$geo_politcal_zone",
-                       "states": {"$addToSet": "$state"}}
-        }
-    ])
+    geopolitical_zones_states = collection.aggregate(
+        [{"$group": {"_id": "$geo_politcal_zone", "states": {"$addToSet": "$state"}}}]
+    )
 
-
-# Insert geopolitical zones and their corresponding states into the new collection
+    # Insert geopolitical zones and their corresponding states into the new collection
     for geopolitical_zone in geopolitical_zones_states:
         region = {
             "geo_political_zone": geopolitical_zone["_id"],
-            "states": geopolitical_zone["states"]
+            "states": geopolitical_zone["states"],
         }
         # geopolitical_zones.insert_one(region)
 
@@ -51,7 +47,7 @@ try:
             local_government_area = {
                 "lga": lgas["lgas"],
                 "state_id": state["_id"],
-                "state": state["state"]
+                "state": state["state"],
             }
             local_governments.insert_one(local_government_area)
         else:
@@ -59,4 +55,4 @@ try:
 except Exception as e:
     print(e)
 
-client.close()
+# client.close()
