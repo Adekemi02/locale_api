@@ -2,15 +2,10 @@
 
 
 userSchema = {
-    "first_name": {
+    "name": {
         "type": "string",
         "required": True,
-        "maxlength": 50
-    },
-    "last_name": {
-        "type": "string",
-        "required": True,
-        "maxlength": 50
+        "maxlength": 40
     },
     "email": {
         "type": "string",
