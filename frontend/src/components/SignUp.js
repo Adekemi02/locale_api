@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import "../App.css"
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -7,16 +7,47 @@ import { useForm } from "react-hook-form";
 
 const Register = () => {
 
-
     const { register, watch, handleSubmit, reset, formState: { errors } } = useForm();
 
-    // const watchName = watch("name", "")
-    // console.log(watchName)
+    const [show, setShow] = useState(true);
+
+    const [serverResponse, setServerResponse] = useState('')
+
 
     const submitForm = (data) => {
         console.log(data)
-        reset()
 
+        if (data.password === data.confirmPassword) {
+
+            const body = {
+                username: data.username,
+                email: data.email,
+                password: data.password
+            }
+
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            };
+
+            fetch('http://localhost:5000/api/v1/register', requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    setServerResponse(data.message)
+                    console.log(serverResponse)
+                    setShow(true)
+                })
+                // setShow(false)
+                .catch(error => console.log(error))
+
+            reset()
+
+        } else {
+            alert("Passwords do not match")
+            // setShow(true)    
+        }
     }
 
 
@@ -24,7 +55,18 @@ const Register = () => {
         <>
             <div className="container">
                 <div className="form">
-                    <h1 className="text"> Create Account </h1>
+
+                    {show?
+                        <>
+                            <Alert variant="success" onClose={() => setShow(false)} dismissible>
+                                    <p> {serverResponse} </p>
+                                </Alert>
+
+                            <h1 className="text"> Create Account </h1>
+                        </>
+                        :
+                        <h1 className="text mb-4"> Create Account </h1>
+                    }
 
                     <Form>
                         <Form.Group className="mb-3">
