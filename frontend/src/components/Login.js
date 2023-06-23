@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import { useForm } from "react-hook-form";
 import "../App.css"
 
 
 
 const Login = () => {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const { register, watch, handleSubmit, reset, formState: { errors } } = useForm();
 
     const loginUser = () => {
-        console.log("Form submitted")
-
-        setEmail("")
-        setPassword("")
+        console.log("login")
     }
 
     return (
@@ -29,9 +26,7 @@ const Login = () => {
                             <Form.Control 
                                 type="email" 
                                 placeholder="Enter email address"
-                                value={email}
-                                name="email"
-                                onChange={(e) => setEmail(e.target.value)}
+                                {...register("email", { required: true })}
                             />
                         </Form.Group>
 

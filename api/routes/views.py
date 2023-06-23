@@ -4,6 +4,26 @@ from flask import jsonify, Response
 from bson.objectid import ObjectId
 from http import HTTPStatus
 from bson import json_util
+from ..redisview import limiter
+from flask import Flask
+from flask_caching import Cache
+import os
+from dotenv import load_dotenv, find_dotenv
+
+
+
+load_dotenv(find_dotenv())
+
+
+app = Flask(__name__)
+
+limiter.init_app(app)
+
+cache = Cache(config={
+                  "CACHE_TYPE": "redis",
+                  "CACHE_REDIS_URL": os.environ.get('REDIS_URL')
+                }
+            )
 
 
 state_ns = Namespace('state', description='Namespace for State')
@@ -48,6 +68,8 @@ def get_lgas():
 
 @state_ns.route('/regions')
 class Regions(Resource):
+    @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self):
         """
             Get all regions
@@ -66,6 +88,7 @@ class Regions(Resource):
 
 @state_ns.route('/lgas')
 class Lgas(Resource):
+    @limiter.limit('3/minute')
     def get(self):
         """
             Get all lgas
@@ -90,6 +113,7 @@ class Lgas(Resource):
 
 @state_ns.route('/states')
 class States(Resource):
+    @limiter.limit('3/minute')
     def get(self):
         """
             Get all states
@@ -108,6 +132,7 @@ class States(Resource):
 
 @state_ns.route('/states/<string:state_id>')
 class State(Resource):
+    @limiter.limit('3/minute')
     def get(self, state_id):
         """
             Get a single state
@@ -131,6 +156,7 @@ class State(Resource):
         
 @state_ns.route('/lgas/<string:state_id>')
 class Lga(Resource):
+    @limiter.limit('3/minute')
     def get(self, state_id):
         """
             Get all lgas in a state
@@ -156,6 +182,7 @@ class Lga(Resource):
         
 @state_ns.route('/regions/<string:region_id>')
 class Region(Resource):
+    @limiter.limit('3/minute')
     def get(self, region_id):
         """
             Get a single region
@@ -179,6 +206,7 @@ class Region(Resource):
     
 @state_ns.route('/search/<string:query>')
 class Search(Resource):
+    @limiter.limit('3/minute')
     def get(self, query):
         """
             Search for a state or lga
@@ -223,10 +251,3 @@ class Search(Resource):
 
             return {'message': 'An error occurred'}, HTTPStatus.INTERNAL_SERVER_ERROR
 
-@state_ns.route('/hello')
-class Hello(Resource):
-    def get(self):
-        """
-            Hello world
-        """
-        return {'message': 'Hello world'}, HTTPStatus.OK
