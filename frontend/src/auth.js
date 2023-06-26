@@ -1,13 +1,18 @@
-import {createAuthProvider} from 'react-token-auth';
+import { createAuthProvider } from 'react-token-auth';
 
 
 
-export const [useAuth, authFetch, login, logout] =
-    createAuthProvider({
-        accessTokenKey: 'access_token',
-        onUpdateToken: (token) => fetch('/api/v1/refresh', {
+const authProvider = createAuthProvider({
+    accessTokenKey: 'access_token',
+    onUpdateToken: (token) =>
+        fetch('http://localhost:5000/api/v1/auth/refresh', {
             method: 'POST',
-            body: token.refresh_token
-        })
-        .then(r => r.json())
-    });
+            body: token.refresh_token,
+        }).then((r) => r.json()),
+});
+
+
+export const useAuth = authProvider.useAuth;
+export const authFetch = authProvider.authFetch;
+export const login = authProvider.login;
+export const logout = authProvider.logout;

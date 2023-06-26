@@ -2,9 +2,59 @@ import React, { useEffect, useState } from "react";
 import { BiMenuAltRight } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth";
 import "../App.css"
 
+
+
+const LoggedInLinks = () => {
+    return (
+        <>
+            <li className="nav-item">
+                <Link className="nav-link" to="/"> Home </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/contact"> Contact </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/dashboard"> Dashboard </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/logout"> Logout </Link>
+            </li>
+        </>
+    )
+}
+
+const LoggedOutLinks = () => {
+    return (
+        <>
+            <li className="nav-item">
+                <Link className="nav-link" to="/"> Home </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/about"> About </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/docs"> Documentation </Link>
+            </li>
+            <Link to="/register">
+                <button className="btn">Register</button>
+            </Link>
+            <Link to="/login">
+                <button className="btn btn__login">Login</button>
+            </Link>
+
+        </>
+    )
+}
+
+
 const NavBar = () => {
+
+    const { isAuthenticated, user } = useAuth();
+    // const [logged] = useAuth();
+
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const [size, setSize] = useState({
@@ -47,32 +97,8 @@ const NavBar = () => {
                             ${menuOpen && size.width < 768 ? `${"isMenu"}` : ""} 
                             }`}
                         >
-
                             <ul>
-                                <li>
-                                    <Link to="/">Home</Link>
-                                </li>
-
-                                <li>
-                                    <Link to="/about">About</Link>
-                                </li>
-
-                                <li>
-                                    <Link to="/contact">Contact</Link>
-                                </li>
-
-                                <li>
-                                    <Link to="/docs">Documentation</Link>
-                                </li>
-
-                                <Link to="/register">
-                                    <button className="btn">Register</button>
-                                </Link>
-
-                                <Link to="/login">
-                                    <button className="btn btn__login">Login</button>
-                                </Link>
-
+                                {isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />}
                             </ul>
                         </nav>
 

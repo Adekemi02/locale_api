@@ -89,6 +89,7 @@ class Regions(Resource):
 @state_ns.route('/lgas')
 class Lgas(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self):
         """
             Get all lgas
@@ -114,6 +115,7 @@ class Lgas(Resource):
 @state_ns.route('/states')
 class States(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self):
         """
             Get all states
@@ -133,6 +135,7 @@ class States(Resource):
 @state_ns.route('/states/<string:state_id>')
 class State(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self, state_id):
         """
             Get a single state
@@ -157,6 +160,7 @@ class State(Resource):
 @state_ns.route('/lgas/<string:state_id>')
 class Lga(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self, state_id):
         """
             Get all lgas in a state
@@ -183,6 +187,7 @@ class Lga(Resource):
 @state_ns.route('/regions/<string:region_id>')
 class Region(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self, region_id):
         """
             Get a single region
@@ -207,6 +212,7 @@ class Region(Resource):
 @state_ns.route('/search/<string:query>')
 class Search(Resource):
     @limiter.limit('3/minute')
+    @cache.cached(timeout=60)
     def get(self, query):
         """
             Search for a state or lga
