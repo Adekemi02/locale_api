@@ -22,7 +22,8 @@ auth_ns = Namespace('auth', description='Namesake for Authentication')
 user_model = auth_ns.model('User', {
     'username': fields.String(required=True, description='User first name'),
     'email': fields.String(required=True, description='User email address'),
-    'password': fields.String(required=True, description='User password')
+    'password': fields.String(required=True, description='User password'),
+    'confirm_password': fields.String(required=True, description='Confirm user password')
 })
 
 #   Login model
@@ -31,13 +32,12 @@ login_model = auth_ns.model('Login', {
     'password': fields.String(required=True, description='User password')
 })
 
-
-#   Generate API key model
-generate_api_key_model = auth_ns.model('Generate API Key', {
-    'project_name': fields.String(required=True, description='Project name'),
-    'project_description': fields.String(description='Project description')
-    
+reset_password_model = auth_ns.model('ResetPassword', {
+    'email': fields.String(required=True, description='User email address'),
+    'new_password': fields.String(required=True, description='New password'),
+    'confirm_password': fields.String(required=True, description='Confirm new password')
 })
+
 
 #   Database connection
 database = connect_to_db()
@@ -80,11 +80,17 @@ class SignUp(Resource):
         username = data['username']
         email = data['email']
         password = data['password']
+        confirm_password = data['confirm_password']
+
+        #   Check if password and confirm password match
+        if password != confirm_password:
+            return {'message': 'Password and confirm password do not match'}, HTTPStatus.BAD_REQUEST
 
         user = {
             'username': username,
             'email': email,
             'password_hash': generate_password_hash(password),
+            'confirm_password_hash': generate_password_hash(confirm_password),
             'created_at': datetime.utcnow()
         }
 
@@ -154,7 +160,7 @@ class Login(Resource):
             return response, HTTPStatus.OK
 
     
-@auth_ns.route('/refresh')
+@auth_ns.route('/auth/refresh')
 class Refresh(Resource):
     @auth_ns.doc(description='Refresh a user\'s token')
     @cache.cached(timeout=60)
@@ -171,47 +177,11 @@ class Refresh(Resource):
 
         return {'access_token': access_token}, HTTPStatus.OK
 
-@auth_ns.route('/generate-api-key')
-class GenerateApiKey(Resource):
-    @auth_ns.expect(generate_api_key_model)
-    @auth_ns.doc(description='Generate a new API key')
-    @jwt_required()
-    def post(self):
-        """
-            Generate a new API key
-        """
-
-        current_user = get_jwt_identity()
-
-        data = request.get_json()
-
-        project_name = data.get('project_name')
-        project_description = data.get('project_description')
-
-        #   Check if project name and description are provided
-        if not project_name or not project_description:
-            return {'message': 'Project name and description required'}, HTTPStatus.BAD_REQUEST
-        
-        generate_key_doc = {
-            'project_name': project_name,
-            'project_description': project_description,
-            'api_key': database.users.find_one({'_id': ObjectId(current_user)})['api_key'],
-            'created_at': datetime.utcnow()
-        }
-
-        #   Insert generate key document into database
-        database.generate_keys.insert_one(generate_key_doc)
-
-        #  Check if user has generated an API key for this project before
-        if database.users.find_one({'_id': ObjectId(current_user), 'generate_keys.project_name': project_name}):
-            return {'message': 'API key generated'}, HTTPStatus.OK
-        
-
-        return {'message': 'API key already generated'}, HTTPStatus.OK
-
     
-@auth_ns.route('/logout')
+@auth_ns.route('/auth/logout')
 class Logout(Resource):
+    @auth_ns.doc(description='Logout a user')
+    @jwt_required()
     def post(self):
         """
             Logout a user
@@ -219,16 +189,41 @@ class Logout(Resource):
 
         return {'message': 'User logged out'}
     
-@auth_ns.route('/reset-password')
+@auth_ns.route('/auth/reset-password')
 class ResetPassword(Resource):
+    @auth_ns.expect(reset_password_model)
+    @auth_ns.doc(description='Reset a user\'s password')
+    @jwt_required()
     def post(self):
         """
             Reset a user's password
         """
 
-        return {'message': 'Password reset'}
+        data = request.get_json()
+        email = data.get('email')
+        new_password = data.get('new_password')
+        confirm_new_password = data.get('confirm_new_password')
+
+        #   Check if email, new password and confirm new password are provided
+        if not email or not new_password or not confirm_new_password:
+            return {'message': 'Email, new password and confirm new password required'}, HTTPStatus.BAD_REQUEST
+        
+        #   Check if new password and confirm new password match
+        if new_password != confirm_new_password:
+            return {'message': 'New password and confirm new password must match'}, HTTPStatus.BAD_REQUEST
+
+        user = database.users.find_one({'email': email})
+
+        if user:
+            new_password_hash = generate_password_hash(new_password)
+            database.users.update_one({'email': email}, {'$set': {'password_hash': new_password_hash}})
+
+            return {'message': 'Password reset successfuly'}, HTTPStatus.OK
+        
+        return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
     
-@auth_ns.route('/forgot-password')
+@auth_ns.route('/auth/forgot-password')
 class ForgotPassword(Resource):
     def post(self):
         """
@@ -237,7 +232,7 @@ class ForgotPassword(Resource):
 
         return {'message': 'Password reset'}
     
-@auth_ns.route('/confirm-email')
+@auth_ns.route('/auth/confirm-email')
 class ConfirmEmail(Resource):
     def post(self):
         """

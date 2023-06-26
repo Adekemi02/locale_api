@@ -248,3 +248,32 @@ body {
     margin: auto;
     width: 80%;
 }
+
+.about-container {
+    border: 1px solid #000;
+    width: 80%;
+    height: 700px;
+    margin: 30px auto;
+    padding: 40px;
+    background-color: #E6E6FA;
+    /* color: white; */
+    text-align: justify;
+    animation: fadeIn 1s;
+}
+    
+.about-container h1, h3 {
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+    
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+

@@ -1,12 +1,5 @@
 from email_validator import validate_email, EmailNotValidError
 from api.model.db import connect_to_db
-# import sys
-# from os.path import abspath, dirname
-
-
-# Load environment variables
-# load_dotenv(find_dotenv())
-
 
 
 
@@ -25,7 +18,7 @@ def is_valid_email(email):
 user_validation = {
     "$jsonSchema": {
         "bsonType": "object",
-        "required": ["username", "email", "password_hash"],
+        "required": ["username", "email", "password_hash", "confirm_password"],
         "properties": {
             "username": {
                 "bsonType": "string",
@@ -40,6 +33,12 @@ user_validation = {
             "password_hash": {
                 "bsonType": "string",
                 "description": "Password is required and must be a string",
+                "minLength": 6,
+                "maxLength": 1024
+            },
+            "confirm_password": {
+                "bsonType": "string",
+                "description": "Confirm password is required and must be a string",
                 "minLength": 6,
                 "maxLength": 1024
             },
@@ -61,16 +60,16 @@ except Exception as e:
     print(e)
 
 
-users.create_index("email", unique=True)
-def insert_test_doc():
-    test_document = {
-        "name": "test3",
-        "email": "ggtt3@gmail.com",
-        "password_hash": "test12345"
-    }
-    try:
-        users.insert_one(test_document)
-    except Exception as e:
-        print(e)
+# users.create_index("email", unique=True)
+# def insert_test_doc():
+#     test_document = {
+#         "name": "test3",
+#         "email": "ggtt3@gmail.com",
+#         "password_hash": "test12345"
+#     }
+#     try:
+#         users.insert_one(test_document)
+#     except Exception as e:
+#         print(e)
 
-insert_test_doc()
+# insert_test_doc()

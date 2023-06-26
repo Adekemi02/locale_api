@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 
 const Register = () => {
 
-    const { register, watch, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     const [show, setShow] = useState(true);
 
@@ -31,7 +31,7 @@ const Register = () => {
                 body: JSON.stringify(body)
             };
 
-            fetch('http://localhost:5000/api/v1/register', requestOptions)
+            fetch('http://localhost:5000/api/v1/auth/register', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
@@ -76,7 +76,7 @@ const Register = () => {
                                 placeholder="Enter your username"
                                 {...register("username", { required: true, maxLength: 40 })}
                             />
-                            {errors.username && <span className="text-danger"> Userame is required </span>}
+                            {errors.username && <span className="text-danger"> Username is required </span>}
                             {/* <br /> */}
                             {errors.username?.type === "maxLength" && <span className="text-danger"> Userame cannot exceed 40 characters </span>}
                         </Form.Group>
