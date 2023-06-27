@@ -1,4 +1,5 @@
 import os
+import redis
 from dotenv import load_dotenv, find_dotenv
 from datetime import timedelta
 
@@ -14,6 +15,9 @@ class Config:
     REDIS_URL = os.environ.get('REDIS_URL')
     CACHE_TYPE = 'redis'
     CACHE_REDIS_URL = REDIS_URL
+    r = redis.from_url(os.environ['REDIS_URL'])
+    r.set('key', 'redis-py')
+    r.get('key')
 
 class DevConfig(Config):
     DEBUG = os.environ.get('FLASK_DEBUG')
