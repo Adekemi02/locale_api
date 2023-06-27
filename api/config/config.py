@@ -12,7 +12,7 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
-    REDIS_URL = os.environ.get('REDIS_URL')
+    REDIS_URL = os.getenv('REDIS_URL')
     CACHE_TYPE = 'redis'
     CACHE_REDIS_URL = REDIS_URL
 
