@@ -16,6 +16,7 @@ class Config:
     CACHE_TYPE = 'redis'
     CACHE_REDIS_URL = REDIS_URL
     r = redis.from_url(os.environ['REDIS_URL'])
+    r = redis.Redis(host='localhost', port=6379, db=0, password=os.environ.get('REDIS_PASSWORD'))
     r.set('key', 'redis-py')
     r.get('key')
 
