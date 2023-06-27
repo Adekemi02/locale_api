@@ -24,8 +24,7 @@ def create_app(config=config_dict['development']):
     redis_client = FlaskRedis(app)
 
     cache.init_app(app, config={
-        "CACHE_TYPE": "redis",
-        "CACHE_REDIS_URL": app.config['REDIS_URL']
+        
         })
    
     api = Api(app, 
