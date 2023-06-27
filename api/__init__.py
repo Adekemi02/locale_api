@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager
 from flask_redis import FlaskRedis
 from http import HTTPStatus
 
-
+# rediss://red-cid1esp5rnuhheud2h10:zs5u1nfxArvi4CPlcsBDLftct6WSpL62@oregon-redis.render.com:6379
 
 def create_app(config=config_dict['development']):
     app = Flask(__name__)
@@ -23,7 +23,10 @@ def create_app(config=config_dict['development']):
 
     redis_client = FlaskRedis(app)
 
-    cache.init_app(app)
+    cache.init_app(app, config={
+        "CACHE_TYPE": "redis",
+        "CACHE_REDIS_URL": app.config['REDIS_URL']
+        })
    
     api = Api(app, 
               title='Locale API',  
