@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from .config.config import config_dict
 from .model.db import connect_to_db
@@ -6,9 +7,14 @@ from .routes.views import state_ns, cache
 from .routes.auth import auth_ns
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_redis import FlaskRedis
+import redis
+# from redis import Redis
 from http import HTTPStatus
+from dotenv import load_dotenv, find_dotenv
 
+
+
+load_dotenv(find_dotenv())
 
 
 def create_app(config=config_dict['development']):
@@ -21,7 +27,10 @@ def create_app(config=config_dict['development']):
   
   db = connect_to_db()
 
-  redis_client = FlaskRedis(app)
+  r = redis.Redis(
+    host=os.environ.get('REDIS_HOST'),
+    port=12668,
+    password=os.environ.get('REDIS_PASSWORD'))
 
   cache.init_app(app)
   
