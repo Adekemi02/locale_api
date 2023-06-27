@@ -20,7 +20,7 @@ app = Flask(__name__)
 limiter.init_app(app)
 
 cache = Cache(config={
-                  "CACHE_TYPE": "redis",
+                  "CACHE_TYPE": "simple",
                   "CACHE_REDIS_URL": os.environ.get('REDIS_URL')
                 }
             )
