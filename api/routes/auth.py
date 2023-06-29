@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from bson.objectid import ObjectId
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from .views import cache
+from ..redisview import cache
 from functools import wraps
 import jwt
 
@@ -44,20 +44,22 @@ database = connect_to_db()
 
 
 #   API key required decorator
-def api_key_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        api_key = request.headers.get('API-Key')
+def api_key_required():
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_function(*args, **kwargs):
+            api_key = request.headers.get('API-Key')
 
-        if api_key:
-            user = database.users.find_one({'api_key': api_key})
+            if api_key:
+                user = database.users.find_one({'api_key': api_key})
 
-            if user and user.is_active:
-                return f(*args, **kwargs)
-            
-        return {'message': 'Invalid API key'}, HTTPStatus.UNAUTHORIZED
+                if user and user['api_key'] == api_key:
+                    return fn(*args, **kwargs)
+                
+            return {'message': 'Invalid API key'}, HTTPStatus.UNAUTHORIZED
     
-    return decorated_function
+        return decorated_function
+    return wrapper
 
 @auth_ns.route('/auth/register')
 class SignUp(Resource):
@@ -158,6 +160,8 @@ class Login(Resource):
             }
 
             return response, HTTPStatus.OK
+        
+        return {'message': 'Invalid credentials'}, HTTPStatus.UNAUTHORIZED
 
     
 @auth_ns.route('/auth/refresh')

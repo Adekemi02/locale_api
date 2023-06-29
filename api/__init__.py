@@ -3,14 +3,15 @@ from flask import Flask
 from .config.config import config_dict
 from .model.db import connect_to_db
 from flask_restx import Api
-from .routes.views import state_ns, cache
+from .routes.views import state_ns
 from .routes.auth import auth_ns
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import redis
-# from redis import Redis
 from http import HTTPStatus
 from dotenv import load_dotenv, find_dotenv
+# from flask_caching import Cache
+from .redisview import cache
 
 
 
@@ -31,14 +32,29 @@ def create_app(config=config_dict['development']):
     host=os.environ.get('REDIS_HOST'),
     port=12668,
     password=os.environ.get('REDIS_PASSWORD'))
+  
+  # cache = Cache(app)
 
   cache.init_app(app)
+
+  authorizations = {
+    'Bearer Auth': {
+      'type': 'apiKey',
+      'in': 'header',
+      'name': 'Authorization',
+      # 'description': 'Add a JWT token to the header with ** Bearer &lt;JWT token&gt; to authorize **'
+    }
+  }
+
   
   api = Api(app, 
             title='Locale API',  
             description='''
               A simple API for getting states and local governments in Nigeria
-            '''
+            ''',
+            authorizations=authorizations,
+            security='Bearer Auth',
+            # prefix='/api/v1'
           )
   
   api.add_namespace(state_ns, path='/api/v1')
