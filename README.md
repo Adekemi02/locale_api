@@ -13,7 +13,7 @@
 <!---Project Logo --->
 
 <div align="center">
-  <h1><img src="./images/Locale_screen.PNG" alt="Logo" width="90%" height="40%">
+  <h1><img src="./api/images/Locale_screen.PNG" alt="Logo" width="90%" height="40%">
   </h1>
 </div>
 
@@ -21,7 +21,7 @@
   <p align="center">
     <a href="https://github.com/Adekemi02/locale_api/wiki"><strong>Explore the Docs »</strong></a>
     <br />
-    <a href="https://github.com/Adekemi02/locale_api/blob/main/images/Local_screen2.png">View Demo</a>
+    <a href="https://github.com/Adekemi02/locale_api/blob/main/api/images/Local_screen2.png">View Demo</a>
     ·
     <a href="https://github.com/Aadekemi/locale_api/issues">Report Bug</a>
     ·
@@ -134,14 +134,14 @@ To make use of this API, simply follow the following steps:
 ## Sample
 
 <div align="center">
-  <h1><img src="./images/Locale_screen2.png" alt="Logo">
+  <h1><img src="./api/images/Locale_screen2.png" alt="Logo">
   </h1>
 </div>
 
 ---
 
 <div align="center">
-  <h1><img src="./images/Locale_screen3.png" alt="Logo">
+  <h1><img src="./api/images/Locale_screen3.png" alt="Logo">
   </h1>
 </div>
 
