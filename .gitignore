@@ -4,6 +4,6 @@ __pycache__
 Sample/
 mongo_test.py
 locale_env
-api/data/nigeria-data.json
+# api/data/nigeria-data.json
 api/model/schema.py
 ```

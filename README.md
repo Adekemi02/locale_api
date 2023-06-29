@@ -94,6 +94,30 @@ Creating this API, I was able to learn and understand the following concepts:
 <!-- INSTALLATION -->
 ## Installation
 
+1. Clone the repo
+   ```sh
+   git clone https://github.com/Adekemi02/locale_api
+    ```
+
+2. Navigate to the project directory
+    ```sh
+    cd locale_api
+    ```
+
+3. Create a virtual environment
+    ```sh
+    python -m venv venv
+    ```
+4. Install the required packages
+    ```sh
+    pip install -r requirements.txt
+    ```
+5. Run the app
+    ```sh
+    flask run
+    ```
+6. Open the app in your preferred browser by visiting: [http://localhost:5000](http://localhost:5000).
+
 ---
 
 <!-- GETTING STARTED -->

@@ -54,7 +54,7 @@ def get_states():
     database = connect_to_db()
     states = database.data
 
-    data = list(states.find())
+    data = list(states.find().sort('state', 1))
 
     for item in data:
         item['_id'] = str(ObjectId(item['_id']))
