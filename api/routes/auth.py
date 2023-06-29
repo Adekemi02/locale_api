@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask_restx import Namespace, Resource, fields
 from ..model.db import connect_to_db
 from http import HTTPStatus
-from flask import request
+from flask import request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from bson.objectid import ObjectId
@@ -43,6 +43,23 @@ reset_password_model = auth_ns.model('ResetPassword', {
 database = connect_to_db()
 
 
+def verify_api_key(api_key):
+    # Retrieve the user from the database or any other data source
+    user = get_user_by_api_key(api_key)
+    
+    if user:
+        return True
+    
+    return False
+
+def get_user_by_api_key(api_key):
+    user = database.users.find_one({'api_key': api_key})
+
+    if user:
+        return user
+    
+    return {"message": "User not found"}, HTTPStatus.NOT_FOUND
+
 #   API key required decorator
 def api_key_required():
     def wrapper(fn):
@@ -50,15 +67,19 @@ def api_key_required():
         def decorated_function(*args, **kwargs):
             api_key = request.headers.get('API-Key')
 
-            if api_key:
-                user = database.users.find_one({'api_key': api_key})
+            if not api_key or not verify_api_key(api_key):
+                return jsonify(message='Invalid API key'), HTTPStatus.UNAUTHORIZED
 
-                if user and user['api_key'] == api_key:
-                    return fn(*args, **kwargs)
+            # if api_key:
+            #     user = database.users.find_one({'api_key': api_key})
+
+            #     if user and user['api_key'] == api_key:
+            #         return fn(*args, **kwargs)
                 
-            return {'message': 'Invalid API key'}, HTTPStatus.UNAUTHORIZED
+            return fn(*args, **kwargs)
     
         return decorated_function
+    
     return wrapper
 
 @auth_ns.route('/auth/register')
