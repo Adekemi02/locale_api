@@ -4,11 +4,14 @@ from flask import jsonify, Response
 from bson.objectid import ObjectId
 from http import HTTPStatus
 from bson import json_util
-from ..redisview import limiter
+from ..redisview import limiter, cache
 from flask import Flask
-from flask_caching import Cache
+# from flask_caching import Cache
 import os
 from dotenv import load_dotenv, find_dotenv
+from flask_jwt_extended import jwt_required
+from .auth import api_key_required
+from flask_caching import Cache
 
 
 
@@ -19,11 +22,17 @@ app = Flask(__name__)
 
 limiter.init_app(app)
 
-cache = Cache(config={
-                  "CACHE_TYPE": "redis",
-                  "CACHE_REDIS_URL": os.environ.get('REDIS_URL')
-                }
-            )
+cache.init_app(app)
+
+# cache = Cache(app, config={
+#     "CACHE_TYPE": "redis",
+#     "CACHE_REDIS_URL": os.environ.get('REDIS_URL')
+# })
+
+# cache.init_app(app, config={
+#                     "CACHE_TYPE": "redis",
+#                     "CACHE_REDIS_URL": os.environ.get('REDIS_URL')
+# })
 
 
 state_ns = Namespace('state', description='Namespace for State')
@@ -68,8 +77,11 @@ def get_lgas():
 
 @state_ns.route('/regions')
 class Regions(Resource):
+    # @api_key_required()
+    # @state_ns.doc()
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self):
         """
             Get all regions
@@ -90,6 +102,7 @@ class Regions(Resource):
 class Lgas(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self):
         """
             Get all lgas
@@ -116,6 +129,7 @@ class Lgas(Resource):
 class States(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self):
         """
             Get all states
@@ -136,6 +150,7 @@ class States(Resource):
 class State(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self, state_id):
         """
             Get a single state
@@ -161,6 +176,7 @@ class State(Resource):
 class Lga(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self, state_id):
         """
             Get all lgas in a state
@@ -188,6 +204,7 @@ class Lga(Resource):
 class Region(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self, region_id):
         """
             Get a single region
@@ -213,6 +230,7 @@ class Region(Resource):
 class Search(Resource):
     @limiter.limit('3/minute')
     @cache.cached(timeout=60)
+    @jwt_required()
     def get(self, query):
         """
             Search for a state or lga
