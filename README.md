@@ -21,7 +21,7 @@
   <p align="center">
     <a href="https://github.com/Adekemi02/locale_api/wiki"><strong>Explore the Docs »</strong></a>
     <br />
-    <a href="https://github.com/Adekemi02/locale_api/blob/main/api/images/Local_screen2.png">View Demo</a>
+    <a href="https://github.com/Adekemi02/locale_api/blob/main/api/images/Local_screen2.PNG">View Demo</a>
     ·
     <a href="https://github.com/Aadekemi/locale_api/issues">Report Bug</a>
     ·
@@ -68,7 +68,7 @@ This project was built with Python's Flask-RESTX by  by <a href="https://www.git
 <!-- ### Built With: -->
 ## Built with
 
-![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![MongoDB](https://img.shields.io/badge/-MongoDB-green?logo=mongodb&logoColor=white)
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![MongoDB](https://img.shields.io/badge/-MongoDB-green?style=for-the-badge&logo=mongodb&logoColor=white)
 
 ---
 
@@ -134,14 +134,14 @@ To make use of this API, simply follow the following steps:
 ## Sample
 
 <div align="center">
-  <h1><img src="./api/images/Locale_screen2.png" alt="Logo">
+  <h1><img src="./api/images/Local_screen2.PNG" alt="Logo">
   </h1>
 </div>
 
 ---
 
 <div align="center">
-  <h1><img src="./api/images/Locale_screen3.png" alt="Logo">
+  <h1><img src="./api/images/Locale_screen3.PNG" alt="Logo">
   </h1>
 </div>
 
