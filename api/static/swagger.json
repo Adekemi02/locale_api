@@ -1,0 +1,342 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "This is a documentation for Locale API built with Flask and Flask-RestX",
+        "version": "1.0.0",
+        "title": "Locale API",
+        "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "tags": [
+        {
+        "name": "Authentication API",
+        "description": "Authentication Routes"
+        },
+        {
+        "name": "States API",
+        "description": "States Routes"
+        },
+        {
+        "name": "LGA API",
+        "description": "LGA Routes"
+        },
+        {
+        "name": "Regions API",
+        "description": "Regions Routes"
+        },
+        {
+        "name": "Search API",
+        "description": "Search Routes"
+        }
+    ],
+    "servers": [
+        {
+        "url": "http://localhost:5000/api/v1",
+        "description": "Local server"
+        },
+        {
+        "url": "https://locale-api.herokuapp.com/api/v1",
+        "description": "Production server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "User name"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User password"
+                    },
+                    "confirm_password": {
+                        "type": "string",
+                        "description": "User password confirmation"
+                    }
+                },
+                "required": [
+                    "username",
+                    "email",
+                    "password",
+                    "confirm_password"
+                ]
+            },
+            "API_KEY": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "objectID",
+                        "description": "API_KEY id"
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "API_KEY"
+                    },
+                    "user_id": {
+                        "type": "objectID",
+                        "description": "User id"
+                    }
+                }
+            },
+            "State": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "objectID",
+                        "description": "State id"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "State name"
+                    },
+                    "lgas": {
+                        "type": "array",
+                        "description": "State's local government areas",
+                        "items": {
+                            "$ref": "#/components/schemas/LGA"
+                        }
+                    },
+                    "regions": {
+                        "type": "array",
+                        "description": "State's regions",
+                        "items": {
+                            "$ref": "#/components/schemas/Region"
+                        }
+                    },
+                    "governor": {
+                        "type": "string",
+                        "description": "State's governor"
+                    },
+                    "capital": {
+                        "type": "string",
+                        "description": "State's capital"
+                    },
+                    "slogan": {
+                        "type": "string",
+                        "description": "State's slogan"
+                    },
+                    "population": {
+                        "type": "integer",
+                        "description": "State's population"
+                    },
+                    "landmass": {
+                        "type": "integer",
+                        "description": "State's landmass"
+                    },
+                    "universities": {
+                        "type": "string",
+                        "description": "State's universities"
+                    },
+                    "past_governors": {
+                        "type": "string",
+                        "description": "State's past governors"
+                    },
+                    "senatorial_districts": {
+                        "type": "string",
+                        "description": "State's senatorial districts"
+                    }
+                }
+            },
+            "LGA": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "objectID",
+                        "description": "LGA id"
+                    },
+                    "lga": {
+                        "type": "string",
+                        "description": "LGA name"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "LGA's state"
+                    }
+                }
+            },
+            "Region": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "objectID",
+                        "description": "Region id"
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "Region name"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "Region's state"
+                    }
+                }
+            },
+            "Search": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "objectID",
+                        "description": "Search id"
+                    },
+                    "search": {
+                        "type": "string",
+                        "description": "Search query"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "409": {
+                        "description": "User already exists"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Login a user",
+                "description": "Login a user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/auth/refresh_token": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Refresh user token",
+                "description": "Refresh user token",
+                "headers": {
+                    "Authorization": {
+                        "description": "Bearer Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tp"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Logout a user",
+                "description": "Logout a user",
+                "headers": {
+                    "Authorization": {
+                        "description": "API Key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/states": {
+            "get": {
+                "tags": [
+                    "States API"
+                ],
+                "summary": "Get all states",
+                "description": "Get all states",
+                "headers": {
+                    "Authorization": {
+                        
+                        "description": "API Key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "States retrieved successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        }
+    }
+}

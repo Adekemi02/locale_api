@@ -1,6 +1,6 @@
 import json
 import pprint
-from ..model.db import connect_to_db
+from api.model.db import connect_to_db
 
 
 # Connect to database
@@ -10,17 +10,28 @@ database = client.locale
 
 # Open JSON file
 try:
-    with open("data/nigeria-data.json", "r") as json_file:
+    with open("api/data/nigeria-data.json", "r") as json_file:
         data = json.load(json_file)
-        collection = database.data
+        # collection = database.data
         # collection.insert_many(data)
 except Exception as e:
     print(e)
+
+
+try:
+    with open("api/data/dataset.json", "r") as json_file:
+        local_government = json.load(json_file)
+        collection = database.local_government
+        # collection.insert_many(local_government)
+except Exception as e:
+    print(e)
+
 
 # Create a new collection for geopolitical zones
 geopolitical_zones = database.regions
 
 local_governments = database.local_governments
+
 
 # Get distinct geopolitical zones with their corresponding states
 try:
@@ -39,20 +50,49 @@ try:
 except Exception as e:
     print(e)
 
-try:
-    for lgas in data:
-        state = collection.find_one({"state": lgas["state"]})
+# try:
+#     for lgas in data:
+#         state = collection.find_one({"state": lgas["state"]})
 
-        if state:
-            local_government_area = {
-                "lga": lgas["lgas"],
-                "state_id": state["_id"],
-                "state": state["state"],
+#         if state:
+#             local_government_area = {
+#                 "lga": lgas["lgas"],
+#                 "state_id": state["_id"],
+#                 "state": state["state"],
+#             }
+#             # local_governments.insert_one(local_government_area)
+#         else:
+#             print("State not found")
+# except Exception as e:
+#     print(e)
+
+
+# Update local government with state id
+try:
+    lga = collection.aggregate(
+        [{"$lookup": {
+            "from": "local_governments", 
+            "localField": "state", 
+            "foreignField": "state", 
+            "as": "states"}
+            },
+            {
+                "$addFields": {
+                    "state_id": {
+                        "$arrayElemAt": ["$states._id", 0]
+                    }
+                }
             }
-            local_governments.insert_one(local_government_area)
-        else:
-            print("State not found")
+        ]
+    )
+
+    for local_government in lga:
+        # print(local_government)
+        local_government.update_one({"lga": local_government["lga"]}, {"$set": {"state_id": local_government["state_id"]}})
+        # pass
 except Exception as e:
     print(e)
+
+    
 
 # client.close()

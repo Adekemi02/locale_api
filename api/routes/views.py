@@ -10,7 +10,7 @@ from flask import Flask
 import os
 from dotenv import load_dotenv, find_dotenv
 from flask_jwt_extended import jwt_required
-from .auth import api_key_required
+from ..utils.local import authenticate_with_jwt_and_api_key
 from flask_caching import Cache
 
 
@@ -77,11 +77,10 @@ def get_lgas():
 
 @state_ns.route('/regions')
 class Regions(Resource):
-    # @api_key_required()
-    # @state_ns.doc()
-    @limiter.limit('3/minute')
+    @authenticate_with_jwt_and_api_key()
+    @limiter.limit('5/minute')
     @cache.cached(timeout=60)
-    @jwt_required()
+    # @jwt_required()
     def get(self):
         """
             Get all regions
