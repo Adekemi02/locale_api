@@ -58,10 +58,10 @@
 <!-- About the API --->
 ## About Locale API
 
-Locale is developer tool for anyone who needs to know Nigeria geopraphically. Locale's API shows you all Nigeria's regions, states, and local governement areas (LGAs). Locale is looking to be a handful tool for the thousands of businesses building for Nigeria's 200M+ population size.
+Locale is a developer tool for anyone who needs to know Nigeria geographically. Locale's API shows you all of Nigeria's regions, states, and local government areas (LGAs). Locale is looking to be a handful tool for the thousands of businesses building for Nigeria's 200M+ population size.
 
 
-This project was built with Python's Flask-RESTX by  by <a href="https://www.github.com/Adekemi02">Barakat Adisa</a> as part of Backend Engineering final Semester Exam and Capstone Project at <a href="https://altschoolafrica.com/schools/engineering">AltSchool Africa</a> 
+This project was built with Python's Flask-RESTX by  <a href="https://www.github.com/Adekemi02">Barakat Adisa</a> as part of Backend Engineering final Semester Exam and Capstone Project at <a href="https://altschoolafrica.com/schools/engineering">AltSchool Africa</a> 
 
 ---
 
@@ -75,7 +75,7 @@ This project was built with Python's Flask-RESTX by  by <a href="https://www.git
 <!-- Lessons from the Project -->
 ## Lessons Learned
 
-Creating this API, I was able to learn and understand the following concepts:
+By creating this API, I was able to learn and understand the following concepts:
 * Caching
 * App Deployment with Render
 * MongoDB
@@ -131,11 +131,11 @@ To make use of this API, simply follow the following steps:
 
 3. Register as a user by clicking on 'auth' to reveal the dropdown menu for authentication and authorization. You can easily register via the 'api/v1/auth/register' route.
 
-4. Once registered, sign in using the 'api/v1/auth/login' route to generate a JWT token. This token will grant you access to the API. Copy the access token without the quotation marks.
+4. Once registered, sign in using the 'api/v1/auth/login' route to generate a JWT token. This token will grant you access to the API. Copy the jwt_token without quotation marks.
 
 5. Scroll up and click on "Authorize" located at the top right corner. Enter your JWT token in the following format:
    ```
-   Bearer thejwtaccesstoken
+   Bearer thejwt_token
    ```
 
 6. Click 'Authorize' and then 'Close' to securely authenticate yourself.
