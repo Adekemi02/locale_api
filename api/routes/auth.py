@@ -43,45 +43,6 @@ reset_password_model = auth_ns.model('ResetPassword', {
 database = connect_to_db()
 
 
-def verify_api_key(api_key):
-    # Retrieve the user from the database or any other data source
-    user = get_user_by_api_key(api_key)
-    
-    if user:
-        return True
-    
-    return False
-
-def get_user_by_api_key(api_key):
-    user = database.users.find_one({'api_key': api_key})
-
-    if user:
-        return user
-    
-    return {"message": "User not found"}, HTTPStatus.NOT_FOUND
-
-#   API key required decorator
-def api_key_required():
-    def wrapper(fn):
-        @wraps(fn)
-        def decorated_function(*args, **kwargs):
-            api_key = request.headers.get('API-Key')
-
-            if not api_key or not verify_api_key(api_key):
-                return jsonify(message='Invalid API key'), HTTPStatus.UNAUTHORIZED
-
-            # if api_key:
-            #     user = database.users.find_one({'api_key': api_key})
-
-            #     if user and user['api_key'] == api_key:
-            #         return fn(*args, **kwargs)
-                
-            return fn(*args, **kwargs)
-    
-        return decorated_function
-    
-    return wrapper
-
 @auth_ns.route('/auth/register')
 class SignUp(Resource):
     @auth_ns.expect(user_model)
@@ -97,8 +58,11 @@ class SignUp(Resource):
         #   Check if user already exists
         user = database.users.find_one({'email': data['email']})
 
+
         if user:
             return {'message': 'User already exists'}, HTTPStatus.BAD_REQUEST
+        
+        api_key = str(uuid.uuid4())
 
         username = data['username']
         email = data['email']
@@ -114,6 +78,7 @@ class SignUp(Resource):
             'email': email,
             'password_hash': generate_password_hash(password),
             'confirm_password_hash': generate_password_hash(confirm_password),
+            'api_key': api_key,
             'created_at': datetime.utcnow()
         }
 
@@ -151,23 +116,19 @@ class Login(Resource):
             api_key = user.get('api_key')
 
             if not api_key:
-
-                #   Generate API key
-                api_key = str(uuid.uuid4())
-
-                #   Update user's api key
-                database.users.update_one({'email': email}, {'$set': {'api_key': api_key}})
+                return {'message': 'Invalid API key'}, HTTPStatus.NOT_FOUND
 
             #   Generate access and refresh tokens
             access_token = create_access_token(identity=str(ObjectId(user['_id'])))
             refresh_token = create_refresh_token(identity=str(ObjectId(user['_id'])))
 
             token_data = {
+                'sub': str(ObjectId(user['_id'])),
                 'identity': str(ObjectId(user['_id'])),
                 'api_key': api_key
             }
 
-            #   Encode token data
+            # Encode token data
             jwt_token = jwt.encode(token_data, 
                                    os.getenv('JWT_SECRET_KEY'),
                                     algorithm='HS256')

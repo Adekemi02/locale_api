@@ -42,6 +42,10 @@ user_validation = {
                 "minLength": 6,
                 "maxLength": 1024
             },
+            "api_key": {
+                "bsonType": "string",
+                "description": "API key is required and must be a string"
+            },
             "created_at": {
                 "bsonType": "date",
                 "description": "Date the user was created"

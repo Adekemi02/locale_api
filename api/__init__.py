@@ -10,7 +10,7 @@ from flask_jwt_extended import JWTManager
 import redis
 from http import HTTPStatus
 from dotenv import load_dotenv, find_dotenv
-# from flask_caching import Cache
+from flask_swagger_ui import get_swaggerui_blueprint
 from .redisview import cache
 
 
@@ -56,6 +56,18 @@ def create_app(config=config_dict['development']):
             security='Bearer Auth',
             # prefix='/api/v1'
           )
+
+  SWAGGER_URL = '/swagger'
+  API_URL = '/static/swagger.json'
+  SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+      'app_name': 'Locale API'
+    }
+  )
+
+  app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
   
   api.add_namespace(state_ns, path='/api/v1')
   api.add_namespace(auth_ns, path='/api/v1')
