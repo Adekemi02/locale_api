@@ -3,7 +3,7 @@
 __pycache__
 Sample/
 mongo_test.py
-locale_env
+env-locale
 # api/data/nigeria-data.json
 api/model/schema.py
 ```
